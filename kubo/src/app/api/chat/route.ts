@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { GoogleGenerativeAI } from '@google/generative-ai'
 import { parseNaturalQuery, generateApiRequest, generateClarificationPrompt, generateLocationResolutionPrompt } from '@/lib/ai-parser'
-import { ChatResponse } from '@/types'
+import { ChatResponse, WeatherApiResponse, WeatherData } from '@/types'
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || 'AIzaSyBuROoixboUK2wuCEiMTU3-iK7X3khaoQc')
 
@@ -51,8 +51,12 @@ export async function POST(request: NextRequest) {
         const result = await model.generateContent(clarificationPrompt)
         const response = await result.response
         clarificationResponse = response.text()
-      } catch (geminiError: any) {
-        console.error('Gemini API error for clarification:', geminiError.message || geminiError)
+      } catch (geminiError: unknown) {
+        if (geminiError instanceof Error) {
+          console.error('Gemini API error for clarification:', geminiError.message || geminiError)
+        } else {
+          console.error('Gemini API error for clarification:', geminiError)
+        }
         clarificationResponse = `I'd be happy to help with weather information. Could you please specify a city and country? For example, 'weather in London, UK' or 'Tokyo, Japan forecast'.`
       }
 
@@ -132,7 +136,7 @@ Keep it concise and helpful, around 2-3 sentences.
       throw new Error(`Weather API failed with status ${weatherResponse.status}`)
     }
 
-    const weatherData = await weatherResponse.json()
+  const weatherData = await weatherResponse.json() as WeatherApiResponse
     
     // Check if we got valid weather data
     if (!weatherData.success || !weatherData.data || weatherData.data.length === 0) {
@@ -153,7 +157,7 @@ NASA POWER satellite data for ${resolvedLocation}:
 - Average Wind Speed: ${weatherData.averages.windSpeed} m/s
 
 Recent daily data:
-${weatherData.data.slice(-5).map((day: any) => 
+${weatherData.data.slice(-5).map((day) => 
   `${day.date}: ${day.temperature}°C, ${day.precipitation}mm rain, ${day.windSpeed} m/s wind`
 ).join('\n')}
 
@@ -178,8 +182,12 @@ Use minimal weather icons (☁️🌡️💨) only where relevant. Be profession
       const result = await model.generateContent(enhancedPrompt)
       const response = await result.response
       aiResponse = response.text()
-    } catch (geminiError: any) {
-      console.error('Gemini API error:', geminiError.message || geminiError)
+    } catch (geminiError: unknown) {
+      if (geminiError instanceof Error) {
+        console.error('Gemini API error:', geminiError.message || geminiError)
+      } else {
+        console.error('Gemini API error:', geminiError)
+      }
       
       // Enhanced fallback response
       const conditionSummary = weatherData.averages.temperature > 20 ? '🌡️ Warm conditions' : 
@@ -204,11 +212,15 @@ Use minimal weather icons (☁️🌡️💨) only where relevant. Be profession
 
     return NextResponse.json(chatResponse)
 
-  } catch (error: any) {
-    console.error('Chat API error:', error.message || error)
-    
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error('Chat API error:', error.message || error)
+    } else {
+      console.error('Chat API error:', error)
+    }
+
     // Check if it's a network-related error
-    if (error.code === 'ENOTFOUND' || error.code === 'ECONNREFUSED' || error.message?.includes('fetch')) {
+    if (error instanceof Error && (error.message?.includes('fetch') || error.message === 'ENOTFOUND' || error.message === 'ECONNREFUSED')) {
       return NextResponse.json(
         { 
           success: false,

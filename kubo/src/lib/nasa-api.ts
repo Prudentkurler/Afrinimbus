@@ -1,4 +1,4 @@
-import { GeocodeResult, NASAPowerResponse, WeatherData } from '@/types'
+import { GeocodeResult, WeatherData } from '@/types'
 
 export async function geocodeLocation(location: string): Promise<GeocodeResult | null> {
   try {
@@ -39,10 +39,11 @@ export async function fetchNASAWeatherData(
     const response = await fetch(url)
     if (!response.ok) throw new Error('NASA API request failed')
     
-    const data: any = await response.json()
-    
-    // The real NASA API structure is different - use properties.parameter
-    const parameters = data.properties?.parameter
+  type NASAResponse = { properties?: { parameter?: Record<string, Record<string, number>> } }
+  const data = await response.json() as NASAResponse
+
+  // The real NASA API structure is different - use properties.parameter
+  const parameters = data.properties?.parameter
     if (!parameters || !parameters.T2M || !parameters.PRECTOTCORR || !parameters.WS2M) {
       throw new Error('Invalid NASA API response: Missing required parameters')
     }

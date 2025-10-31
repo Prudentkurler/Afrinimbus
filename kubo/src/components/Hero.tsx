@@ -20,9 +20,9 @@ export default function Hero({ onSearch, isLoading }: HeroProps) {
   }
 
   const suggestionChips = [
-    "🌌 Weather for camping in Yosemite",
-    "☀️ Will it rain in Miami next month?",
-    "🌍 Temperature trends in Tokyo"
+    " Will it be very hot or cold at Madina for shopping next week?",
+    " Will it rain in Miami next month?",
+ 
   ]
 
   const handleChipClick = (suggestion: string) => {
@@ -67,11 +67,11 @@ export default function Hero({ onSearch, isLoading }: HeroProps) {
           <div className="flex items-center justify-center gap-3 mb-2">
             <Sparkles className="w-8 h-8 text-violet-400" />
             <h1 className="text-6xl md:text-7xl font-bold bg-gradient-to-r from-violet-400 via-blue-400 to-cyan-400 bg-clip-text text-transparent">
-              AstroCast
+              Diva
             </h1>
           </div>
           <p className="text-gray-300 text-xl md:text-2xl font-light">
-            Ask about your plans and I'll check the skies with NASA data.
+            Ask about your plans and I&apos;ll check the skies with NASA data.
           </p>
         </motion.div>
 

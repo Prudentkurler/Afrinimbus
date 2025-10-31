@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import AiThinkingLoader, { AiThinkingOrbs, AiThinkingWaveform } from '@/components/AiThinkingLoader'
+import Link from 'next/link'
 
 export default function LoaderDemo() {
   const [currentLoader, setCurrentLoader] = useState(0)
@@ -52,12 +53,12 @@ export default function LoaderDemo() {
             ))}
           </div>
           
-          <a
+          <Link
             href="/"
             className="mt-4 text-center text-blue-400 hover:text-blue-300 text-sm underline"
           >
             ← Back to NASA Weather Companion
-          </a>
+          </Link>
         </div>
       </div>
     </div>

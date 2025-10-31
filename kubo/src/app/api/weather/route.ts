@@ -83,18 +83,22 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ success: true, ...response })
 
-  } catch (error: any) {
-    console.error('Weather API error:', error.message || error)
-    
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error('Weather API error:', error.message || error)
+    } else {
+      console.error('Weather API error:', error)
+    }
+
     // Handle specific error types
-    if (error.message?.includes('Invalid date format')) {
+    if (error instanceof Error && error.message.includes('Invalid date format')) {
       return NextResponse.json(
         { success: false, error: 'Invalid date format. Please use YYYY-MM-DD format.' },
         { status: 400 }
       )
     }
     
-    if (error.message?.includes('NASA API request failed')) {
+    if (error instanceof Error && error.message.includes('NASA API request failed')) {
       return NextResponse.json(
         { success: false, error: 'NASA weather service is temporarily unavailable. Please try again later.' },
         { status: 503 }

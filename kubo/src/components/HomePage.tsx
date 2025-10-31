@@ -58,7 +58,7 @@ export default function HomePage() {
             {/* AstroCast Logo */}
             <div className="mb-12 text-center">
               <h1 className="text-6xl md:text-8xl font-bold bg-gradient-to-r from-white via-blue-100 to-cyan-200 bg-clip-text text-transparent mb-4 tracking-tight">
-                AstroCast
+                Diva
               </h1>
               <p className="text-neutral-400 text-lg md:text-xl max-w-md mx-auto leading-relaxed">
                 AI-powered weather intelligence from NASA satellite data

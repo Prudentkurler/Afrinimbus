@@ -1,4 +1,4 @@
-'use client'
+ 'use client'
 
 import { useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
@@ -6,6 +6,8 @@ import { useChatStore } from '@/store/chat'
 import { User, Bot, Download, MapPin, Calendar } from 'lucide-react'
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from 'recharts'
 import MessageInput from './MessageInput'
+import type { Message } from '@/store/chat'
+import type { WeatherData } from '@/types'
 
 export default function ChatInterface() {
   const { messages } = useChatStore()
@@ -15,7 +17,7 @@ export default function ChatInterface() {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages])
 
-  const handleDownload = async (messageData: any) => {
+  const handleDownload = async (messageData?: Message['data']) => {
     // TODO: Implement PDF generation with charts and data
     console.log('Download functionality to be implemented', messageData)
   }
@@ -137,7 +139,7 @@ export default function ChatInterface() {
                         </div>
 
                         {/* Precipitation chart if available */}
-                        {message.data.chartData.some((d: any) => d.precipitation > 0) && (
+                        {message.data.chartData.some((d: WeatherData) => d.precipitation > 0) && (
                           <div className="bg-black/40 border border-neutral-700/30 rounded-xl p-4 mt-4">
                             <h4 className="text-white font-medium mb-4">Precipitation</h4>
                             <div className="h-48">

@@ -26,7 +26,7 @@ export default function OfflinePage() {
           </div>
           
           <h2 className="text-xl font-semibold text-white mb-4">
-            You're offline
+            You&apos;re offline
           </h2>
           
           <p className="text-gray-300 mb-6 leading-relaxed">

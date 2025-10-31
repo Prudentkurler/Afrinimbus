@@ -1,4 +1,5 @@
 import { create } from 'zustand'
+import { WeatherData } from '@/types'
 
 export interface Message {
   id: string
@@ -6,7 +7,7 @@ export interface Message {
   content: string
   timestamp: Date
   data?: {
-    chartData?: any[]
+    chartData?: WeatherData[]
     location?: string
     dateRange?: string
     images?: string[]
@@ -106,15 +107,17 @@ export const useChatStore = create<ChatState>((set, get) => ({
         }
       })
 
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Query error:', error)
-      
+
       // Network error handling
       let errorMessage = 'Unable to connect to our services. Please check your internet connection and try again.'
-      if (error.name === 'TypeError' && error.message.includes('fetch')) {
-        errorMessage = 'Network connection failed. Please check your internet connection or try again later.'
-      }
-      
+      if (error instanceof Error) {
+          if (error.name === 'TypeError' && error.message.includes('fetch')) {
+            errorMessage = 'Network connection failed. Please check your internet connection or try again later.'
+          }
+        }
+
       addMessage({
         type: 'assistant',
         content: `🌐 Connection Error\n\n${errorMessage}`
